@@ -4,6 +4,7 @@
 #include "AragornHeroCharacter.h"
 
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
+#include "Aragorn/Components/Combat/HeroCombatComponent.h"
 #include "Aragorn/Components/Input/AragornInputComponent.h"
 #include "Aragorn/DataAssets/Input/DataAsset_InputConfig.h"
 #include "Aragorn/DataAssets/StartUpData/DataAsset_HeroStartupData.h"
@@ -27,6 +28,8 @@ AAragornHeroCharacter::AAragornHeroCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>("FollowCamera");
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	HeroCompbatComponent = CreateDefaultSubobject<UHeroCombatComponent>("HeroCombatComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
@@ -55,6 +58,7 @@ void AAragornHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	auto AragornInputComponent = CastChecked<UAragornInputComponent>(PlayerInputComponent);
 	AragornInputComponent->BindNativeInputAction(InputConfigDataAsset, AragornGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &AAragornHeroCharacter::Input_Move);
 	AragornInputComponent->BindNativeInputAction(InputConfigDataAsset, AragornGameplayTags::InputTag_Look, ETriggerEvent::Triggered, this, &AAragornHeroCharacter::Input_Look);
+	AragornInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &AAragornHeroCharacter::Input_AbilityInputPressed, &AAragornHeroCharacter::Input_AbilityInputReleased);
 }
 
 void AAragornHeroCharacter::PossessedBy(AController* NewController)
@@ -74,16 +78,9 @@ void AAragornHeroCharacter::Input_Move(const FInputActionValue& InputActionValue
 {
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 	const FRotator MovementRotation = FRotator(0.f, Controller->GetControlRotation().Yaw, 0.f);
-	if (MovementVector.Y != 0.f)
-	{
-		const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-	}
-	if (MovementVector.X != 0.f)
-	{
-		const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
-		AddMovementInput(RightDirection, MovementVector.X);
-	}
+	const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector), RightDirection = MovementRotation.RotateVector(FVector::RightVector);
+	if (MovementVector.Y != 0.f) AddMovementInput(ForwardDirection, MovementVector.Y);
+	if (MovementVector.X != 0.f) AddMovementInput(RightDirection, MovementVector.X);
 }
 
 void AAragornHeroCharacter::Input_Look(const FInputActionValue& InputActionValue)
@@ -91,4 +88,14 @@ void AAragornHeroCharacter::Input_Look(const FInputActionValue& InputActionValue
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
 	if (LookAxisVector.X != 0.f) AddControllerYawInput(LookAxisVector.X);
 	if (LookAxisVector.Y != 0.f) AddControllerPitchInput(LookAxisVector.Y);
+}
+
+void AAragornHeroCharacter::Input_AbilityInputPressed(FGameplayTag InInputTag)
+{
+	AragornAbilitySystemComponent->OnAbilityInputPressed(InInputTag);
+}
+
+void AAragornHeroCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag)
+{
+	AragornAbilitySystemComponent->OnAbilityInputReleased(InInputTag);
 }
