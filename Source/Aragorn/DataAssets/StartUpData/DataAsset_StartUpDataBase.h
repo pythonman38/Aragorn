@@ -8,6 +8,7 @@
 
 class UAragornAbilitySystemComponent;
 class UAragornGameplayAbility;
+class UGameplayEffect;
 
 UCLASS()
 class ARAGORN_API UDataAsset_StartUpDataBase : public UDataAsset
@@ -26,4 +27,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = StartUpData)
 	TArray<TSubclassOf<UAragornGameplayAbility>> ReactiveAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category = StartUpData)
+	TArray<TSubclassOf<UGameplayEffect>> StartupGameplayEffects;
 };

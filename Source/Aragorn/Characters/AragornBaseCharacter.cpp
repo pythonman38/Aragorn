@@ -23,6 +23,16 @@ UAbilitySystemComponent* AAragornBaseCharacter::GetAbilitySystemComponent() cons
 	return GetAragornAbilitySystemComponent();
 }
 
+UPawnUIComponent* AAragornBaseCharacter::GetPawnUIComponent() const
+{
+	return nullptr;
+}
+
+UPawnCombatComponent* AAragornBaseCharacter::GetPawnCombatComponent() const
+{
+	return nullptr;
+}
+
 void AAragornBaseCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);

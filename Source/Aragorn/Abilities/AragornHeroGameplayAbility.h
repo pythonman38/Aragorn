@@ -25,6 +25,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Aragorn|Ability")
 	UHeroCombatComponent* GetHeroCombatComponentFromActorInfo();
 
+	UFUNCTION(BlueprintPure, Category = "Aragorn|Ability")
+	FGameplayEffectSpecHandle MakeHeroDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InUsedComboCount);
+
 private:
 	TWeakObjectPtr<AAragornHeroCharacter> CachedAragornHeroCharacter;
 

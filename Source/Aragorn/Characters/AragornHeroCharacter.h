@@ -10,6 +10,7 @@
 class UCameraComponent;
 class UDataAsset_InputConfig;
 class UHeroCombatComponent;
+class UHeroUIComponent;
 class USpringArmComponent;
 
 struct FInputActionValue;
@@ -21,6 +22,14 @@ class ARAGORN_API AAragornHeroCharacter : public AAragornBaseCharacter
 
 public:
 	AAragornHeroCharacter();
+
+	// Inherited via IPawnCombatInterface
+	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+
+	// Inherited via IPawn UI Interface
+	virtual UPawnUIComponent* GetPawnUIComponent() const override;
+
+	virtual UHeroUIComponent* GetHeroUIComponent() const override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -47,6 +56,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UHeroCombatComponent> HeroCompbatComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = HUD, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UHeroUIComponent> HeroUIComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = CharacterData, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;

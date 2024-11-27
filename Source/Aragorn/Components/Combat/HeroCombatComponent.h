@@ -16,4 +16,14 @@ class ARAGORN_API UHeroCombatComponent : public UPawnCombatComponent
 public:
 	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
 	AAragornHeroWeapon* GetHeroCarriedWeaponByTag(FGameplayTag InWeaponTag) const;
+
+	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
+	AAragornHeroWeapon* GetHeroCurrentEquippedWeapon() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
+	float GetHeroCurrentEquippedWeaponDamageAtLevel(float InLevel) const;
+
+	virtual void OnHitTargetActor(AActor* HitActor) override;
+
+	virtual void OnWeaponPulledFromTargetActor(AActor* InteractedActor) override;
 };

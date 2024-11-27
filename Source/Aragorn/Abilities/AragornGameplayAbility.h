@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "Aragorn/Singletons/AragornEnumTypes.h"
 #include "AragornGameplayAbility.generated.h"
 
 class UAragornAbilitySystemComponent;
@@ -35,6 +36,11 @@ protected:
 
 	UFUNCTION(BlueprintPure, Category = "Aragorn|Ability")
 	UAragornAbilitySystemComponent* GetAragornAbilitySystemComponentFromActorInfo() const;
+
+	FActiveGameplayEffectHandle NativeApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle InSpecHandle);
+
+	UFUNCTION(BlueprintCallable, Category = "Aragorn|Ability", meta = (DisplayName = "Apply Gameplay Effect SpecHandle To Target Actor", ExpandEnumAsExecs = "OutSuccessType"))
+	FActiveGameplayEffectHandle BP_ApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle InSpecHandle, EAragornSuccessType& OutSuccessType);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = AragornAbility)

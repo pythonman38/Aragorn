@@ -7,6 +7,15 @@
 #include "GameplayTagContainer.h"
 #include "PawnCombatComponent.generated.h"
 
+UENUM(BlueprintType)
+enum class EToggleDamageType : uint8
+{
+	CurrentEquippedWeapon,
+	LeftHand,
+	RightHand
+};
+
+
 class AAragornWeaponBase;
 
 UCLASS()
@@ -23,6 +32,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Aragorn|Combat")
 	AAragornWeaponBase* GetCharacterCurrentEquippedWeapon() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Aragorn|Combat")
+	void ToggleWeaponCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType = EToggleDamageType::CurrentEquippedWeapon);
+
+	virtual void OnHitTargetActor(AActor* HitActor);
+
+	virtual void OnWeaponPulledFromTargetActor(AActor* InteractedActor);
+
+protected:
+	TArray<AActor*> OverlappedActors;
 
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Aragorn|Combat")

@@ -5,6 +5,7 @@
 
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
 #include "Aragorn/Components/Combat/HeroCombatComponent.h"
+#include "Aragorn/Components/HUD/HeroUIComponent.h"
 #include "Aragorn/Components/Input/AragornInputComponent.h"
 #include "Aragorn/DataAssets/Input/DataAsset_InputConfig.h"
 #include "Aragorn/DataAssets/StartUpData/DataAsset_HeroStartupData.h"
@@ -30,6 +31,7 @@ AAragornHeroCharacter::AAragornHeroCharacter()
 	FollowCamera->bUsePawnControlRotation = false;
 
 	HeroCompbatComponent = CreateDefaultSubobject<UHeroCombatComponent>("HeroCombatComp");
+	HeroUIComponent = CreateDefaultSubobject<UHeroUIComponent>("HeroUI_Comp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
@@ -41,6 +43,21 @@ AAragornHeroCharacter::AAragornHeroCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
+}
+
+UPawnCombatComponent* AAragornHeroCharacter::GetPawnCombatComponent() const
+{
+	return HeroCompbatComponent;
+}
+
+UPawnUIComponent* AAragornHeroCharacter::GetPawnUIComponent() const
+{
+	return HeroUIComponent;
+}
+
+UHeroUIComponent* AAragornHeroCharacter::GetHeroUIComponent() const
+{
+	return HeroUIComponent;
 }
 
 void AAragornHeroCharacter::BeginPlay()

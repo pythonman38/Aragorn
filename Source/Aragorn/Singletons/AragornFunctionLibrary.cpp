@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
+#include "Aragorn/Interfaces/PawnCombatInterface.h"
 
 UAragornAbilitySystemComponent* UAragornFunctionLibrary::NativeGetAragornASCFromActor(AActor* InActor)
 {
@@ -30,6 +31,25 @@ void UAragornFunctionLibrary::RemoveGameplayFromActorIfFound(AActor* InActor, FG
 void UAragornFunctionLibrary::BP_DoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck, EAragornConfirmType& OutConfirmType)
 {
 	OutConfirmType = NativeDoesActorHaveTag(InActor, TagToCheck) ? EAragornConfirmType::Yes : EAragornConfirmType::No;
+}
+
+UPawnCombatComponent* UAragornFunctionLibrary::BP_GetPawnCombatComponentFromActor(AActor* InActor, EAragornValidType& OutValidType)
+{
+	auto CombatComponent = NativeGetPawnCombatComponentFromActor(InActor);
+
+	OutValidType = CombatComponent ? EAragornValidType::Valid : EAragornValidType::Invalid;
+
+	return CombatComponent;
+}
+
+UPawnCombatComponent* UAragornFunctionLibrary::NativeGetPawnCombatComponentFromActor(AActor* InActor)
+{
+	check(InActor);
+	if (auto PawnCombatInterface = Cast<IPawnCombatInterface>(InActor))
+	{
+		return PawnCombatInterface->GetPawnCombatComponent();
+	}
+	return nullptr;
 }
 
 bool UAragornFunctionLibrary::NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck)
