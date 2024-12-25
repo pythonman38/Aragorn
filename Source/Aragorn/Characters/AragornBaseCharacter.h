@@ -12,6 +12,7 @@
 class UAragornAbilitySystemComponent;
 class UAragornAttributeSet;
 class UDataAsset_StartUpDataBase;
+class UMotionWarpingComponent;
 
 UCLASS()
 class ARAGORN_API AAragornBaseCharacter : public ACharacter, public IAbilitySystemInterface, public IPawnCombatInterface, public IPawnUI_Interface
@@ -40,6 +41,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AbilitySystem)
 	TObjectPtr<UAragornAttributeSet> AragornAttributeSet;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MotionWarping)
+	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = CharacterData)
 	TSoftObjectPtr<UDataAsset_StartUpDataBase> CharacterStartUpData;

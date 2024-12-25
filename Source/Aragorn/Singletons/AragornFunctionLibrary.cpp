@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
 #include "Aragorn/Interfaces/PawnCombatInterface.h"
+#include "GenericTeamAgentInterface.h"
 
 UAragornAbilitySystemComponent* UAragornFunctionLibrary::NativeGetAragornASCFromActor(AActor* InActor)
 {
@@ -40,6 +41,18 @@ UPawnCombatComponent* UAragornFunctionLibrary::BP_GetPawnCombatComponentFromActo
 	OutValidType = CombatComponent ? EAragornValidType::Valid : EAragornValidType::Invalid;
 
 	return CombatComponent;
+}
+
+bool UAragornFunctionLibrary::IsTargetPawnHostile(APawn* QueryPawn, APawn* TargetPawn)
+{
+	check(QueryPawn && TargetPawn);
+	auto QueryTeamAgent = Cast<IGenericTeamAgentInterface>(QueryPawn->GetController());
+	auto TargetTeamAgent = Cast<IGenericTeamAgentInterface>(TargetPawn->GetController());
+	if (QueryTeamAgent && TargetTeamAgent)
+	{
+		return QueryTeamAgent->GetGenericTeamId() != TargetTeamAgent->GetGenericTeamId();
+	}
+	return false;
 }
 
 UPawnCombatComponent* UAragornFunctionLibrary::NativeGetPawnCombatComponentFromActor(AActor* InActor)

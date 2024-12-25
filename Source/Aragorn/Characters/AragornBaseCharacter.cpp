@@ -5,6 +5,7 @@
 
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
 #include "Aragorn/AbilitySystem/AragornAttributeSet.h"
+#include "MotionWarpingComponent.h"
 
 AAragornBaseCharacter::AAragornBaseCharacter()
 {
@@ -16,6 +17,8 @@ AAragornBaseCharacter::AAragornBaseCharacter()
 	AragornAbilitySystemComponent = CreateDefaultSubobject<UAragornAbilitySystemComponent>("AragornAbilitySystemComp");
 
 	AragornAttributeSet = CreateDefaultSubobject<UAragornAttributeSet>("AragornAttributeSet");
+
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpingComponent"));
 }
 
 UAbilitySystemComponent* AAragornBaseCharacter::GetAbilitySystemComponent() const

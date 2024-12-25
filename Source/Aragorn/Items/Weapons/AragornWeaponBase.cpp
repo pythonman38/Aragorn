@@ -4,6 +4,7 @@
 #include "AragornWeaponBase.h"
 
 #include "Aragorn/Singletons/AragornDebugHelper.h"
+#include "Aragorn/Singletons/AragornFunctionLibrary.h"
 #include "Components/BoxComponent.h"
 
 AAragornWeaponBase::AAragornWeaponBase()
@@ -29,12 +30,10 @@ void AAragornWeaponBase::OnCollisonBoxBeginOverlap(UPrimitiveComponent* Overlapp
 
 	if (auto HitPawn = Cast<APawn>(OtherActor))
 	{
-		if (WeaponOwningPawn != HitPawn)
+		if (UAragornFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
 			OnWeaponHitTarget.ExecuteIfBound(OtherActor);
 		}
-
-		// TODO: Implement hit check for enemy characters
 	}
 }
 
@@ -45,11 +44,9 @@ void AAragornWeaponBase::OnCollisonBoxEndOverlap(UPrimitiveComponent* Overlapped
 
 	if (auto HitPawn = Cast<APawn>(OtherActor))
 	{
-		if (WeaponOwningPawn != HitPawn)
+		if (UAragornFunctionLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
 			OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
 		}
-
-		// TODO: Implement hit check for enemy characters
 	}
 }

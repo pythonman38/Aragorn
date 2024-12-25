@@ -21,6 +21,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Aragorn|Ability")
 	UEnemyCombatComponent* GetEnemyCombatComponentFromActorInfo();
 
+	UFUNCTION(BlueprintPure, Category = "Aragorn|Ability")
+	FGameplayEffectSpecHandle MakeEnemyDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, const FScalableFloat& InDamageScalableFloat);
+
 private:
 	TWeakObjectPtr<AAragornEnemyCharacter> CachedAragornEnemyCharacter;
 };
