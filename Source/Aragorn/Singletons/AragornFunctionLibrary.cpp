@@ -7,6 +7,9 @@
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
 #include "Aragorn/Interfaces/PawnCombatInterface.h"
 #include "GenericTeamAgentInterface.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Aragorn/Singletons/AragornDebugHelper.h"
+#include "Aragorn/Singletons/AragornGameplayTags.h"
 
 UAragornAbilitySystemComponent* UAragornFunctionLibrary::NativeGetAragornASCFromActor(AActor* InActor)
 {
@@ -22,7 +25,7 @@ void UAragornFunctionLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGame
 	if (!ASC->HasMatchingGameplayTag(TagToAdd)) ASC->AddLooseGameplayTag(TagToAdd);
 }
 
-void UAragornFunctionLibrary::RemoveGameplayFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove)
+void UAragornFunctionLibrary::RemoveGameplayTagFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove)
 {
 	UAragornAbilitySystemComponent* ASC = NativeGetAragornASCFromActor(InActor);
 
@@ -53,6 +56,40 @@ bool UAragornFunctionLibrary::IsTargetPawnHostile(APawn* QueryPawn, APawn* Targe
 		return QueryTeamAgent->GetGenericTeamId() != TargetTeamAgent->GetGenericTeamId();
 	}
 	return false;
+}
+
+float UAragornFunctionLibrary::GetScalableFloatValueAtLevel(const FScalableFloat& InScalableFloat, float InLevel)
+{
+	return InScalableFloat.GetValueAtLevel(InLevel);
+}
+
+FGameplayTag UAragornFunctionLibrary::ComputeHitReactDirectionTag(AActor* InAttacker, AActor* InVictim, float& OutAngleDifference)
+{
+	check(InAttacker && InVictim);
+
+	const FVector VictimForward = InVictim->GetActorForwardVector(),
+		VictimToAttackerNormalized = (InAttacker->GetActorLocation() - InVictim->GetActorLocation()).GetSafeNormal();
+	const float DotResult = FVector::DotProduct(VictimForward, VictimToAttackerNormalized);
+	OutAngleDifference = UKismetMathLibrary::DegAcos(DotResult);
+
+	const FVector CrossResult = FVector::CrossProduct(VictimForward, VictimToAttackerNormalized);
+
+	if (CrossResult.Z < 0.f) OutAngleDifference *= -1.f;
+	if (OutAngleDifference >= -45.f && OutAngleDifference <= 45.f) return AragornGameplayTags::Shared_Status_HitReact_Front;
+	else if (OutAngleDifference < -45.f && OutAngleDifference > -135.f) return AragornGameplayTags::Shared_Status_HitReact_Left;
+	else if (OutAngleDifference < -135.f || OutAngleDifference > 135.f) return AragornGameplayTags::Shared_Status_HitReact_Back;
+	else if (OutAngleDifference > 45.f && OutAngleDifference <= 135.f) return AragornGameplayTags::Shared_Status_HitReact_Right;
+
+	return AragornGameplayTags::Shared_Status_HitReact_Front;
+}
+
+bool UAragornFunctionLibrary::IsValidBlock(AActor* InAttacker, AActor* InDefender)
+{
+	check(InAttacker && InDefender);
+
+	const float DotResult = FVector::DotProduct(InAttacker->GetActorForwardVector(), InDefender->GetActorForwardVector());
+
+	return DotResult < -0.1f;
 }
 
 UPawnCombatComponent* UAragornFunctionLibrary::NativeGetPawnCombatComponentFromActor(AActor* InActor)

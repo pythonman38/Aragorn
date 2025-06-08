@@ -3,6 +3,7 @@
 
 #include "AragornHeroCharacter.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
 #include "Aragorn/Components/Combat/HeroCombatComponent.h"
 #include "Aragorn/Components/HUD/HeroUIComponent.h"
@@ -18,11 +19,12 @@
 #include "GameFramework/SpringArmComponent.h"
 
 
-AAragornHeroCharacter::AAragornHeroCharacter()
+AAragornHeroCharacter::AAragornHeroCharacter() :
+	SwitchDirection(FVector2D::ZeroVector)
 {
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
 	CameraBoom->SetupAttachment(GetRootComponent());
-	CameraBoom->TargetArmLength = 200.f;
+	CameraBoom->TargetArmLength = 300.f;
 	CameraBoom->SocketOffset = FVector(0.f, 55.f, 65.f);
 	CameraBoom->bUsePawnControlRotation = true;
 
@@ -75,6 +77,8 @@ void AAragornHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 	auto AragornInputComponent = CastChecked<UAragornInputComponent>(PlayerInputComponent);
 	AragornInputComponent->BindNativeInputAction(InputConfigDataAsset, AragornGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &AAragornHeroCharacter::Input_Move);
 	AragornInputComponent->BindNativeInputAction(InputConfigDataAsset, AragornGameplayTags::InputTag_Look, ETriggerEvent::Triggered, this, &AAragornHeroCharacter::Input_Look);
+	AragornInputComponent->BindNativeInputAction(InputConfigDataAsset, AragornGameplayTags::InputTag_SwitchTarget, ETriggerEvent::Triggered, this, &AAragornHeroCharacter::Input_SwitchTargetTriggered);
+	AragornInputComponent->BindNativeInputAction(InputConfigDataAsset, AragornGameplayTags::InputTag_SwitchTarget, ETriggerEvent::Completed, this, &AAragornHeroCharacter::Input_SwitchTargetCompleted);
 	AragornInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &AAragornHeroCharacter::Input_AbilityInputPressed, &AAragornHeroCharacter::Input_AbilityInputReleased);
 }
 
@@ -105,6 +109,18 @@ void AAragornHeroCharacter::Input_Look(const FInputActionValue& InputActionValue
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
 	if (LookAxisVector.X != 0.f) AddControllerYawInput(LookAxisVector.X);
 	if (LookAxisVector.Y != 0.f) AddControllerPitchInput(LookAxisVector.Y);
+}
+
+void AAragornHeroCharacter::Input_SwitchTargetTriggered(const FInputActionValue& InputActionValue)
+{
+	SwitchDirection = InputActionValue.Get<FVector2D>();
+}
+
+void AAragornHeroCharacter::Input_SwitchTargetCompleted(const FInputActionValue& InputActionValue)
+{
+	FGameplayEventData Data;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, SwitchDirection.X > 0.f ? AragornGameplayTags::Player_Event_SwitchTarget_Right :
+		AragornGameplayTags::Player_Event_SwitchTarget_Left, Data);
 }
 
 void AAragornHeroCharacter::Input_AbilityInputPressed(FGameplayTag InInputTag)

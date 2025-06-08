@@ -4,6 +4,7 @@
 #include "AragornAbilitySystemComponent.h"
 
 #include "Aragorn/Abilities/AragornHeroGameplayAbility.h"
+#include "Aragorn/Singletons/AragornGameplayTags.h"
 
 void UAragornAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& InInputTag)
 {
@@ -13,13 +14,23 @@ void UAragornAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& I
 	{
 		if (!AbilitySpec.DynamicAbilityTags.HasTagExact(InInputTag)) continue;
 
-		TryActivateAbility(AbilitySpec.Handle);
+		if (InInputTag.MatchesTag(AragornGameplayTags::InputTag_Toggleable))
+		{
+			if (AbilitySpec.IsActive()) CancelAbilityHandle(AbilitySpec.Handle);
+			else TryActivateAbility(AbilitySpec.Handle);
+		}
+		else TryActivateAbility(AbilitySpec.Handle);
 	}
 }
 
 void UAragornAbilitySystemComponent::OnAbilityInputReleased(const FGameplayTag& InInputTag)
 {
+	if (!InInputTag.IsValid() || !InInputTag.MatchesTag(AragornGameplayTags::InputTag_MustBeHeld)) return;
 
+	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InInputTag) && AbilitySpec.IsActive()) CancelAbilityHandle(AbilitySpec.Handle);
+	}
 }
 
 void UAragornAbilitySystemComponent::GrantHeroWeaponAbilities(const TArray<FAragornHeroAbilitySet>& InDefaultWeaponAbilities, int32 ApplyLevel, TArray<FGameplayAbilitySpecHandle>& OutGrantedAbilitySpecHandles)
