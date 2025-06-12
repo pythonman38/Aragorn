@@ -92,6 +92,14 @@ bool UAragornFunctionLibrary::IsValidBlock(AActor* InAttacker, AActor* InDefende
 	return DotResult < -0.1f;
 }
 
+bool UAragornFunctionLibrary::ApplyGameplayEffectSpecHandleToTargetActor(AActor* InInstigator, AActor* InTargetActor, const FGameplayEffectSpecHandle& InSpecHandle)
+{
+	auto SourceASC = NativeGetAragornASCFromActor(InInstigator);
+	auto TargetASC = NativeGetAragornASCFromActor(InTargetActor);
+	auto ActiveGameplayEffectHandle = SourceASC->ApplyGameplayEffectSpecToTarget(*InSpecHandle.Data, TargetASC);
+	return ActiveGameplayEffectHandle.WasSuccessfullyApplied();
+}
+
 UPawnCombatComponent* UAragornFunctionLibrary::NativeGetPawnCombatComponentFromActor(AActor* InActor)
 {
 	check(InActor);

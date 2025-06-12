@@ -17,7 +17,7 @@ void UEnemyCombatComponent::OnHitTargetActor(AActor* HitActor)
 
 	bool bIsValidBlock = false;
 	const bool bIsPlayerBlocking = UAragornFunctionLibrary::NativeDoesActorHaveTag(HitActor, AragornGameplayTags::Player_Status_Blocking),
-		bIsMyAttackUnblockable = false;
+		bIsMyAttackUnblockable = UAragornFunctionLibrary::NativeDoesActorHaveTag(GetOwningPawn(), AragornGameplayTags::Enemy_Status_Unblockable);
 	if (bIsPlayerBlocking && !bIsMyAttackUnblockable)
 	{
 		bIsValidBlock = UAragornFunctionLibrary::IsValidBlock(GetOwningPawn(), HitActor);
