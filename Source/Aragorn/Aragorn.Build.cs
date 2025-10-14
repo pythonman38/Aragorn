@@ -4,11 +4,14 @@ using UnrealBuildTool;
 
 public class Aragorn : ModuleRules
 {
-	public Aragorn(ReadOnlyTargetRules Target) : base(Target)
+	public Aragorn(ReadOnlyTargetRules targetRules) : base(targetRules)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayTags", "GameplayTasks"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
