@@ -4,6 +4,7 @@
 #include "AragornGameplayAbility.h"
 
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
+#include "Aragorn/Components/Combat/PawnCombatComponent.h"
 
 UAragornGameplayAbility::UAragornGameplayAbility() :
 AbilityActivationPolicy(EAragornAbilityActivationPolicy::OnTriggered)
@@ -31,4 +32,14 @@ void UAragornGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle
 	{
 		if (ActorInfo) ActorInfo->AbilitySystemComponent->ClearAbility(Handle);
 	}
+}
+
+UPawnCombatComponent* UAragornGameplayAbility::GetPawnCombatComponentFromActorInfo() const
+{
+	return GetAvatarActorFromActorInfo()->FindComponentByClass<UPawnCombatComponent>();
+}
+
+UAragornAbilitySystemComponent* UAragornGameplayAbility::GetAragornAbilitySystemComponentFromActorInfo() const
+{
+	return Cast<UAragornAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent);
 }

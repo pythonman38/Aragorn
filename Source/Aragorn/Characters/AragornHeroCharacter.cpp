@@ -10,6 +10,7 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
+#include "Aragorn/Components/Combat/HeroCombatComponent.h"
 #include "Aragorn/DataAssets/StartUpData/DataAsset_StartUpDataBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -35,6 +36,8 @@ AAragornHeroCharacter::AAragornHeroCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
 	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+
+	HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>("HeroCombatComp");
 }
 
 void AAragornHeroCharacter::PossessedBy(AController* NewController)
@@ -60,6 +63,7 @@ void AAragornHeroCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 	auto AragornInputComponent = CastChecked<UAragornInputComponent>(PlayerInputComponent);
 	AragornInputComponent->BindNativeInputAction(InputConfigDataAsset, AragornGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &AAragornHeroCharacter::Input_Move);
 	AragornInputComponent->BindNativeInputAction(InputConfigDataAsset, AragornGameplayTags::InputTag_Look, ETriggerEvent::Triggered, this, &AAragornHeroCharacter::Input_Look);
+	AragornInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &AAragornHeroCharacter::Input_AbilityInputPressed, &AAragornHeroCharacter::Input_AbilityInputReleased);
 }
 
 void AAragornHeroCharacter::BeginPlay()
@@ -89,4 +93,14 @@ void AAragornHeroCharacter::Input_Look(const FInputActionValue& InputActionValue
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
 	if (LookAxisVector.X != 0.f) AddControllerYawInput(LookAxisVector.X);
 	if (LookAxisVector.Y != 0.f) AddControllerPitchInput(LookAxisVector.Y);
+}
+
+void AAragornHeroCharacter::Input_AbilityInputPressed(FGameplayTag InInputTag)
+{
+	AragornAbilitySystemComponent->OnAbilityInputPressed(InInputTag);
+}
+
+void AAragornHeroCharacter::Input_AbilityInputReleased(FGameplayTag InInputTag)
+{
+	AragornAbilitySystemComponent->OnAbilityInputReleased(InInputTag);
 }
