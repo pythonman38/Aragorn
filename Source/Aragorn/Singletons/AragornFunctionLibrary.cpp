@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
+#include "Aragorn/Interfaces/PawnCombatInterface.h"
 
 UAragornAbilitySystemComponent* UAragornFunctionLibrary::NativeGetAragornASCFromActor(AActor* InActor)
 {
@@ -35,4 +36,23 @@ void UAragornFunctionLibrary::BP_DoesActorHaveTag(AActor* InActor, FGameplayTag 
 	EAragornConfirmType& OutConfirmType)
 {
 	OutConfirmType = NativeDoesActorHaveTag(InActor, TagToCheck) ? EAragornConfirmType::Yes : EAragornConfirmType::No;
+}
+
+UPawnCombatComponent* UAragornFunctionLibrary::NativeGetPawnCombatComponentFromActor(AActor* InActor)
+{
+	check(InActor);
+
+	if (auto PawnCombatInterface = Cast<IPawnCombatInterface>(InActor))
+	{
+		return PawnCombatInterface->GetPawnCombatComponent();
+	}
+	return nullptr;
+}
+
+UPawnCombatComponent* UAragornFunctionLibrary::BP_GetPawnCombatComponentFromActor(AActor* InActor,
+	EAragornValidType& OutValidType)
+{
+	auto CombatComponent = NativeGetPawnCombatComponentFromActor(InActor);
+	OutValidType = CombatComponent ? EAragornValidType::Valid : EAragornValidType::Invalid;
+	return CombatComponent;
 }

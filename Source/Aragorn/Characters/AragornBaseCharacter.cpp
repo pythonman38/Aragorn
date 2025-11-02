@@ -33,5 +33,15 @@ UAbilitySystemComponent* AAragornBaseCharacter::GetAbilitySystemComponent() cons
 	return GetAragornAbilitySystemComponent();
 }
 
+UPawnCombatComponent* AAragornBaseCharacter::GetPawnCombatComponent() const
+{
+	return nullptr;
+}
+
+UPawnUI_Component* AAragornBaseCharacter::GetPawnUI_Component() const
+{
+	return nullptr;
+}
+
 
 

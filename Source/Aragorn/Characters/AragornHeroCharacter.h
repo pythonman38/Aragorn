@@ -7,6 +7,7 @@
 #include "GameplayTagContainer.h"
 #include "AragornHeroCharacter.generated.h"
 
+class UHeroUI_Component;
 class UCameraComponent;
 class UDataAsset_InputConfig;
 class UHeroCombatComponent;
@@ -22,6 +23,13 @@ class ARAGORN_API AAragornHeroCharacter : public AAragornBaseCharacter
 public:
 	AAragornHeroCharacter();
 
+	// IPawnCombatInterface Interface
+	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+
+	// IPawnUI_Interface Interface
+	virtual UPawnUI_Component* GetPawnUI_Component() const override;
+	virtual UHeroUI_Component* GetHeroUI_Component() const override;
+
 protected:
 	// APawn Interface
 	virtual void  PossessedBy(AController* NewController) override;
@@ -36,8 +44,11 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UCameraComponent> FollowCamera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = UI, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UHeroCombatComponent> HeroCombatComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = true))
+	TObjectPtr<UHeroUI_Component> HeroUI_Component;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = CharacterData, meta = (AllowPrivateAccess = true))
 	TObjectPtr<UDataAsset_InputConfig> InputConfigDataAsset;

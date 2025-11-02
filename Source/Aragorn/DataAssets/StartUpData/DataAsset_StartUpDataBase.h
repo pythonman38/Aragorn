@@ -7,6 +7,7 @@
 #include "DataAsset_StartUpDataBase.generated.h"
 
 
+class UGameplayEffect;
 class UAragornAbilitySystemComponent;
 class UAragornGameplayAbility;
 
@@ -25,7 +26,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = StartUpData)
 	TArray<TSubclassOf<UAragornGameplayAbility>> ReactiveAbilities;
 
+	UPROPERTY(EditDefaultsOnly, Category = StartUpData)
+	TArray<TSubclassOf<UGameplayEffect>> StartupGameplayEffects;
+
 protected:
-	void GrantAbilities(const TArray<TSubclassOf<UAragornGameplayAbility>>& InAbilitiesToGive,
-		UAragornAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1);
+	// Remove static if errors are generated
+	static void GrantAbilities(const TArray<TSubclassOf<UAragornGameplayAbility>>& InAbilitiesToGive,
+	                           UAragornAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1);
 };

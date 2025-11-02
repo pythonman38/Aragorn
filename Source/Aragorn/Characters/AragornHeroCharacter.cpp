@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
 #include "Aragorn/Components/Combat/HeroCombatComponent.h"
+#include "Aragorn/Components/UI/HeroUI_Component.h"
 #include "Aragorn/DataAssets/StartUpData/DataAsset_StartUpDataBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -38,6 +39,23 @@ AAragornHeroCharacter::AAragornHeroCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
 	HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>("HeroCombatComp");
+
+	HeroUI_Component = CreateDefaultSubobject<UHeroUI_Component>("HeroUI_Comp");
+}
+
+UPawnCombatComponent* AAragornHeroCharacter::GetPawnCombatComponent() const
+{
+	return HeroCombatComponent;
+}
+
+UPawnUI_Component* AAragornHeroCharacter::GetPawnUI_Component() const
+{
+	return HeroUI_Component;
+}
+
+UHeroUI_Component* AAragornHeroCharacter::GetHeroUI_Component() const
+{
+	return HeroUI_Component;
 }
 
 void AAragornHeroCharacter::PossessedBy(AController* NewController)

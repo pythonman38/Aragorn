@@ -3,19 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AragornEnumTypes.h"
 #include "GameplayTagContainer.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AragornFunctionLibrary.generated.h"
 
 
+class UPawnCombatComponent;
 class UAragornAbilitySystemComponent;
-
-UENUM()
-enum class EAragornConfirmType : uint8
-{
-	Yes,
-	No
-};
 
 UCLASS()
 class ARAGORN_API UAragornFunctionLibrary : public UBlueprintFunctionLibrary
@@ -35,4 +30,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Aragorn|FunctionLibrary", meta = (DisplayName = "Does Actor Have Tag", ExpandEnumAsExecs = "OutConfirmType"))
 	static void BP_DoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck, EAragornConfirmType& OutConfirmType);
+
+	static UPawnCombatComponent* NativeGetPawnCombatComponentFromActor(AActor* InActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Aragorn|FunctionLibrary", meta = (DisplayName = "Get Pawn Combat Component From Actor", ExpandEnumAsExecs = "OutValidType"))
+	static UPawnCombatComponent* BP_GetPawnCombatComponentFromActor(AActor* InActor, EAragornValidType& OutValidType);
 };

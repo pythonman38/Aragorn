@@ -3,6 +3,7 @@
 
 #include "AragornGameplayAbility.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Aragorn/AbilitySystem/AragornAbilitySystemComponent.h"
 #include "Aragorn/Components/Combat/PawnCombatComponent.h"
 
@@ -42,4 +43,20 @@ UPawnCombatComponent* UAragornGameplayAbility::GetPawnCombatComponentFromActorIn
 UAragornAbilitySystemComponent* UAragornGameplayAbility::GetAragornAbilitySystemComponentFromActorInfo() const
 {
 	return Cast<UAragornAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent);
+}
+
+FActiveGameplayEffectHandle UAragornGameplayAbility::NativeApplyEffectSpecHandleToTarget(AActor* TargetActor,
+	const FGameplayEffectSpecHandle& InSpecHandle) const
+{
+	auto TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	check(TargetASC && InSpecHandle.IsValid());
+	return GetAragornAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*InSpecHandle.Data, TargetASC);
+}
+
+FActiveGameplayEffectHandle UAragornGameplayAbility::BP_ApplyEffectSpecHandleToTarget(AActor* TargetActor,
+	const FGameplayEffectSpecHandle& InSpecHandle, EAragornSuccessType& OutSuccessType)
+{
+	auto ActiveGameplayEffectHandle = NativeApplyEffectSpecHandleToTarget(TargetActor, InSpecHandle);
+	OutSuccessType = ActiveGameplayEffectHandle.WasSuccessfullyApplied() ? EAragornSuccessType::Successful : EAragornSuccessType::Failed;
+	return ActiveGameplayEffectHandle;
 }
